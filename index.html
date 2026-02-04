@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>EHR Demo Login</title>
 
   <style>
@@ -62,18 +62,51 @@
       gap: 10px;
     }
   </style>
+<style>
+  .ehr-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid #ddd;
+    background: #ffffff;
+  }
+
+  .ehr-logo {
+    height: 48px;
+  }
+
+  .ehr-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1E3A8A;
+  }
+</style>
+
 </head>
 
 <body>
+<header class="ehr-header">
+  <img 
+    src="/assets/clumsy-care-logo.svg" 
+    alt="Clumsy Care Hospital Logo"
+    class="ehr-logo"
+  />
+
+  <div class="ehr-title">
+    Electronic Health Record Demo
+  </div>
+</header>
+
 
   <h2>EHR Demo Login</h2>
   <p>Secure demo environment</p>
 
   <label>Email</label>
-  <input id="email" type="email">
+  <input id="email" type="email" autocomplete="username" />
 
   <label>Password</label>
-  <input id="password" type="password">
+  <input id="password" type="password" autocomplete="current-password" />
 
   <div class="row">
     <button id="login">Sign In</button>
@@ -87,15 +120,17 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+    // 🔴 REPLACE THESE WITH YOUR REAL VALUES
     const SUPABASE_URL = "https://bnoamxkmrfzvlzdaquun.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub2FteGttcmZ6dmx6ZGFxdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTUxMzgsImV4cCI6MjA4NTc5MTEzOH0.y2-BYBvv1OSnABLUwmYhLPseXYMvoT4UAzjJgSgfAjY";
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const msg = (t) => {
-      document.getElementById("msg").textContent = t;
+    const msg = (text) => {
+      document.getElementById("msg").textContent = text;
     };
 
+    // Skip login if already signed in
     const { data: { session } } = await supabase.auth.getSession();
 
     if (session) {
@@ -105,15 +140,22 @@
     document.getElementById("login").onclick = async () => {
       msg("");
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("email").value.trim();
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const password =
+        document.getElementById("password").value;
 
-      if (error) return msg(error.message);
+      const { error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+        msg(error.message);
+        return;
+      }
 
       window.location = "app.html";
     };
@@ -121,19 +163,27 @@
     document.getElementById("signup").onclick = async () => {
       msg("");
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
 
       if (password.length < 8) {
-        return msg("Password must be at least 8 characters.");
+        msg("Password must be at least 8 characters.");
+        return;
       }
 
-      const { error } = await supabase.auth.signUp({
-        email,
-        password
-      });
+      const { error } =
+        await supabase.auth.signUp({
+          email,
+          password
+        });
 
-      if (error) return msg(error.message);
+      if (error) {
+        msg(error.message);
+        return;
+      }
 
       msg("User created. You can now sign in.");
     };
