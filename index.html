@@ -3,15 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
   <title>EHR Demo Login</title>
 
   <style>
+    /* ===== Layout ===== */
+
     body {
       font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+    }
+
+    main {
       margin: 60px auto;
       max-width: 480px;
       padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+
+    /* ===== Header ===== */
+
+    .ehr-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 24px;
+      border-bottom: 1px solid #ddd;
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .ehr-logo {
+      height: 48px;
+      width: auto;
+      display: block;
+    }
+
+    .ehr-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1E3A8A;
+    }
+
+    /* ===== Form ===== */
 
     label {
       display: block;
@@ -62,63 +102,53 @@
       gap: 10px;
     }
   </style>
-<style>
-  .ehr-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px 24px;
-    border-bottom: 1px solid #ddd;
-    background: #ffffff;
-  }
-
-  .ehr-logo {
-    height: 48px;
-  }
-
-  .ehr-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1E3A8A;
-  }
-</style>
-
-
 </head>
 
 <body>
+
+  <!-- ===== Header ===== -->
+
   <header class="ehr-header">
-  <img src="/clumsy-care-logo.svg" alt="Clumsy Care Hospital Logo" class="ehr-logo">
-  <div class="ehr-title">Electronic Health Record Demo</div>
-</header>
+    <img
+      src="/clumsy-care-logo.svg"
+      alt="Clumsy Care Hospital Logo"
+      class="ehr-logo"
+    />
+    <div class="ehr-title">Electronic Health Record Demo</div>
+  </header>
 
+  <!-- ===== Login Box ===== -->
 
+  <main>
 
+    <h2>EHR Demo Login</h2>
+    <p>Secure demo environment</p>
 
-  <h2>EHR Demo Login</h2>
-  <p>Secure demo environment</p>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username" />
 
-  <label>Email</label>
-  <input id="email" type="email" autocomplete="username" />
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password" />
 
-  <label>Password</label>
-  <input id="password" type="password" autocomplete="current-password" />
+    <div class="row">
+      <button id="login">Sign In</button>
+      <button id="signup" type="button" class="secondary">
+        Create Demo User
+      </button>
+    </div>
 
-  <div class="row">
-    <button id="login">Sign In</button>
-    <button id="signup" type="button" class="secondary">
-      Create Demo User
-    </button>
-  </div>
+    <div id="msg" class="error"></div>
 
-  <div id="msg" class="error"></div>
+  </main>
+
+  <!-- ===== Supabase ===== -->
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    // 🔴 REPLACE THESE WITH YOUR REAL VALUES
     const SUPABASE_URL = "https://bnoamxkmrfzvlzdaquun.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub2FteGttcmZ6dmx6ZGFxdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTUxMzgsImV4cCI6MjA4NTc5MTEzOH0.y2-BYBvv1OSnABLUwmYhLPseXYMvoT4UAzjJgSgfAjY";
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub2FteGttcmZ6dmx6ZGFxdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMTUxMzgsImV4cCI6MjA4NTc5MTEzOH0.y2-BYBvv1OSnABLUwmYhLPseXYMvoT4UAzjJgSgfAjY";
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -127,7 +157,9 @@
     };
 
     // Skip login if already signed in
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (session) {
       window.location = "app.html";
@@ -136,8 +168,9 @@
     document.getElementById("login").onclick = async () => {
       msg("");
 
-      const email =
-        document.getElementById("email").value.trim();
+      const email = document
+        .getElementById("email")
+        .value.trim();
 
       const password =
         document.getElementById("password").value;
@@ -145,7 +178,7 @@
       const { error } =
         await supabase.auth.signInWithPassword({
           email,
-          password
+          password,
         });
 
       if (error) {
@@ -159,8 +192,9 @@
     document.getElementById("signup").onclick = async () => {
       msg("");
 
-      const email =
-        document.getElementById("email").value.trim();
+      const email = document
+        .getElementById("email")
+        .value.trim();
 
       const password =
         document.getElementById("password").value;
@@ -173,7 +207,7 @@
       const { error } =
         await supabase.auth.signUp({
           email,
-          password
+          password,
         });
 
       if (error) {
