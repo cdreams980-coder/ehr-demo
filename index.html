@@ -132,9 +132,7 @@
 
     <div class="row">
       <button id="login">Sign In</button>
-      <button id="signup" type="button" class="secondary">
-        Create Demo User
-      </button>
+     
     </div>
 
     <div id="msg" class="error"></div>
@@ -189,34 +187,7 @@
       window.location = "app.html";
     };
 
-    document.getElementById("signup").onclick = async () => {
-      msg("");
 
-      const email = document
-        .getElementById("email")
-        .value.trim();
-
-      const password =
-        document.getElementById("password").value;
-
-      if (password.length < 8) {
-        msg("Password must be at least 8 characters.");
-        return;
-      }
-
-      const { error } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-      if (error) {
-        msg(error.message);
-        return;
-      }
-
-      msg("User created. You can now sign in.");
-    };
   </script>
 
 </body>
